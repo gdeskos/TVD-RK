@@ -8,4 +8,4 @@ EXTRA_ARGS="$@"
 
 cmake \
     $EXTRA_ARGS \
-    ../src
+    ..
