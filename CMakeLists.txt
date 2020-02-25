@@ -37,9 +37,10 @@ set(AMREX_SUBMOD_LOCATION "submods/amrex")
 
 set(CMAKE_CXX_COMPILER ${AMREX_CXX_COMPILER})
 
+# Level Set routine
 set(levelset_exe_name "levelset")
-
 add_executable(${levelset_exe_name}
-               src/level_set_test.cpp)
-
+               src/main.cpp
+               src/LevelSet.cpp)
 target_link_libraries(${levelset_exe_name} amrex)
+
