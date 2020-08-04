@@ -10,7 +10,7 @@
 #include <AMReX_MemProfiler.H>
 #endif
 
-#include "LevelSet.H"
+#include "VOF.H"
 
 using namespace amrex;
 
