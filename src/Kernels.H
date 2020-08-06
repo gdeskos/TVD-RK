@@ -12,5 +12,6 @@
 #include "compute_flux_2D_K.H"
 #else
 #include "compute_flux_3D_K.H"
+#endif
 
 #endif

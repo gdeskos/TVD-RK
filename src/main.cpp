@@ -20,24 +20,24 @@ int main(int argc, char* argv[])
     const Real strt_total = amrex::second();
 
     {
-        // constructor - reads in parameters from inputs file
-        //             - sizes multilevel arrays and data structures
-        AmrCoreAdv amr_core_adv;
+    // constructor - reads in parameters from inputs file
+    //             - sizes multilevel arrays and data structures
+    AmrCoreAdv amr_core_adv;
 	
-        // initialize AMR data
+    // initialize AMR data
 	amr_core_adv.InitData();
 
-    //    // advance solution to final time
-	//amr_core_adv.Evolve();
-	//
-    //    // wallclock time
+    // advance solution to final time
+	amr_core_adv.Evolve();
+	
+    // wallclock time
 	Real end_total = amrex::second() - strt_total;
-	//
-    //    // print wallclock time
-	//ParallelDescriptor::ReduceRealMax(end_total ,ParallelDescriptor::IOProcessorNumber());
-	//if (amr_core_adv.Verbose()) {
-            amrex::Print() << "\nTotal Time: " << end_total << '\n';
-	//}
+	
+    // print wallclock time
+	ParallelDescriptor::ReduceRealMax(end_total ,ParallelDescriptor::IOProcessorNumber());
+	if (amr_core_adv.Verbose()) {
+          amrex::Print() << "\nTotal Time: " << end_total << '\n';
+	}
     }
 
     // destroy timer for profiling
