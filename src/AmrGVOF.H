@@ -1,5 +1,5 @@
-#ifndef AmrCoreAdv_H_
-#define AmrCoreAdv_H_
+#ifndef AmrGVOF_H_
+#define AmrGVOF_H_
 
 #include <string>
 #include <limits>
@@ -20,7 +20,7 @@ class AmrMeshInSituBridge;
 
 using namespace amrex;
 
-class AmrCoreAdv
+class AmrGVOF
     : public amrex::AmrCore
 {
 public:
@@ -30,8 +30,8 @@ public:
 
     // constructor - reads in parameters from inputs file
     //             - sizes multilevel arrays and data structures
-    AmrCoreAdv ();
-    virtual ~AmrCoreAdv();
+    AmrGVOF ();
+    virtual ~AmrGVOF();
 
     // advance solution to final time
     void Evolve ();

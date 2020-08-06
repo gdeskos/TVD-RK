@@ -1,4 +1,4 @@
-#include "AmrCoreAdv.H"
+#include "AmrGVOF.H"
 #include "Kernels.H"
 
 #include <AMReX_MultiFabUtil.H>
@@ -7,7 +7,7 @@ using namespace amrex;
 
 // advance all levels for a single time step
 void
-AmrCoreAdv::AdvancePhiAllLevels (Real time, Real dt_lev, int iteration)
+AmrGVOF::AdvancePhiAllLevels (Real time, Real dt_lev, int iteration)
 {
     constexpr int num_grow = 3;
 

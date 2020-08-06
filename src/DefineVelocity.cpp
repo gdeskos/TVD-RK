@@ -1,4 +1,4 @@
-#include "AmrCoreAdv.H"
+#include "AmrGVOF.H"
 #include "Kernels.H"
 
 #include <AMReX_MultiFabUtil.H>
@@ -6,7 +6,7 @@
 using namespace amrex;
 
 void
-AmrCoreAdv::DefineVelocityAllLevels (Real time)
+AmrGVOF::DefineVelocityAllLevels (Real time)
 {
     for (int lev = 0; lev <= finest_level; ++lev)
         DefineVelocityAtLevel(lev,time);
@@ -23,7 +23,7 @@ AmrCoreAdv::DefineVelocityAllLevels (Real time)
 }
 
 void
-AmrCoreAdv::DefineVelocityAtLevel (int lev, Real time)
+AmrGVOF::DefineVelocityAtLevel (int lev, Real time)
 {
     const auto dx = geom[lev].CellSizeArray();
     const Real* prob_lo = geom[lev].ProbLo();

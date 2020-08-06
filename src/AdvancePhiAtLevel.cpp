@@ -1,11 +1,11 @@
-#include "AmrCoreAdv.H"
+#include "AmrGVOF.H"
 #include "Kernels.H"
 
 using namespace amrex;
 
 // Advance a single level for a single time step, updates flux registers
 void
-AmrCoreAdv::AdvancePhiAtLevel (int lev, Real time, Real dt_lev, int iteration, int ncycle)
+AmrGVOF::AdvancePhiAtLevel (int lev, Real time, Real dt_lev, int iteration, int ncycle)
 {
     constexpr int num_grow = 3;
 

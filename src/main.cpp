@@ -1,11 +1,10 @@
-
 #include <iostream>
 
 #include <AMReX.H>
 #include <AMReX_BLProfiler.H>
 #include <AMReX_ParallelDescriptor.H>
 
-#include "AmrCoreAdv.H"
+#include "AmrGVOF.H"
 
 using namespace amrex;
 
@@ -22,20 +21,20 @@ int main(int argc, char* argv[])
     {
     // constructor - reads in parameters from inputs file
     //             - sizes multilevel arrays and data structures
-    AmrCoreAdv amr_core_adv;
+    AmrGVOF amr_gvof;
 	
     // initialize AMR data
-	amr_core_adv.InitData();
+	amr_gvof.InitData();
 
     // advance solution to final time
-	amr_core_adv.Evolve();
+	amr_gvof.Evolve();
 	
     // wallclock time
 	Real end_total = amrex::second() - strt_total;
 	
     // print wallclock time
 	ParallelDescriptor::ReduceRealMax(end_total ,ParallelDescriptor::IOProcessorNumber());
-	if (amr_core_adv.Verbose()) {
+	if (amr_gvof.Verbose()) {
           amrex::Print() << "\nTotal Time: " << end_total << '\n';
 	}
     }

@@ -1,4 +1,3 @@
-
 #include <AMReX_ParallelDescriptor.H>
 #include <AMReX_ParmParse.H>
 #include <AMReX_MultiFabUtil.H>
@@ -15,15 +14,15 @@
 #include <AMReX_MemProfiler.H>
 #endif
 
-#include "AmrCoreAdv.H"
-#include "Kernels.H"
+#include "AmrGVOF.H"
+#include "Kernels.H" // This is where we define all LegWork_K.H headers
 
 using namespace amrex;
 
 // constructor - reads in parameters from inputs file
 //             - sizes multilevel arrays and data structures
 //             - initializes BCRec boundary condition object
-AmrCoreAdv::AmrCoreAdv ()
+AmrGVOF::AmrGVOF ()
 {
     ReadParameters();
 
@@ -98,7 +97,7 @@ AmrCoreAdv::AmrCoreAdv ()
 #endif
 }
 
-AmrCoreAdv::~AmrCoreAdv ()
+AmrGVOF::~AmrGVOF ()
 {
 #ifdef BL_USE_SENSEI_INSITU
     delete insitu_bridge;
@@ -107,7 +106,7 @@ AmrCoreAdv::~AmrCoreAdv ()
 
 // advance solution to final time
 void
-AmrCoreAdv::Evolve ()
+AmrGVOF::Evolve ()
 {
     Real cur_time = t_new[0];
     int last_plot_file_step = 0;
@@ -174,7 +173,7 @@ AmrCoreAdv::Evolve ()
 
 // initializes multilevel data
 void
-AmrCoreAdv::InitData ()
+AmrGVOF::InitData ()
 {
     if (restart_chkfile == "") {
         // start simulation from the beginning
@@ -201,7 +200,7 @@ AmrCoreAdv::InitData ()
 // fill with interpolated coarse level data.
 // overrides the pure virtual function in AmrCore
 void
-AmrCoreAdv::MakeNewLevelFromCoarse (int lev, Real time, const BoxArray& ba,
+AmrGVOF::MakeNewLevelFromCoarse (int lev, Real time, const BoxArray& ba,
 				    const DistributionMapping& dm)
 {
     const int ncomp = phi_new[lev-1].nComp();
@@ -230,7 +229,7 @@ AmrCoreAdv::MakeNewLevelFromCoarse (int lev, Real time, const BoxArray& ba,
 // fill with existing fine and coarse data.
 // overrides the pure virtual function in AmrCore
 void
-AmrCoreAdv::RemakeLevel (int lev, Real time, const BoxArray& ba,
+AmrGVOF::RemakeLevel (int lev, Real time, const BoxArray& ba,
 			 const DistributionMapping& dm)
 {
     const int ncomp = phi_new[lev].nComp();
@@ -261,7 +260,7 @@ AmrCoreAdv::RemakeLevel (int lev, Real time, const BoxArray& ba,
 // Delete level data
 // overrides the pure virtual function in AmrCore
 void
-AmrCoreAdv::ClearLevel (int lev)
+AmrGVOF::ClearLevel (int lev)
 {
     phi_new[lev].clear();
     phi_old[lev].clear();
@@ -271,7 +270,7 @@ AmrCoreAdv::ClearLevel (int lev)
 // Make a new level from scratch using provided BoxArray and DistributionMapping.
 // Only used during initialization.
 // overrides the pure virtual function in AmrCore
-void AmrCoreAdv::MakeNewLevelFromScratch (int lev, Real time, const BoxArray& ba,
+void AmrGVOF::MakeNewLevelFromScratch (int lev, Real time, const BoxArray& ba,
 					  const DistributionMapping& dm)
 {
     const int ncomp = 1;
@@ -313,7 +312,7 @@ void AmrCoreAdv::MakeNewLevelFromScratch (int lev, Real time, const BoxArray& ba
 // tag all cells for refinement
 // overrides the pure virtual function in AmrCore
 void
-AmrCoreAdv::ErrorEst (int lev, TagBoxArray& tags, Real time, int ngrow)
+AmrGVOF::ErrorEst (int lev, TagBoxArray& tags, Real time, int ngrow)
 {
     static bool first = true;
     static Vector<Real> phierr;
@@ -364,7 +363,7 @@ AmrCoreAdv::ErrorEst (int lev, TagBoxArray& tags, Real time, int ngrow)
 
 // read in some parameters from inputs file
 void
-AmrCoreAdv::ReadParameters ()
+AmrGVOF::ReadParameters ()
 {
     {
 	ParmParse pp;  // Traditionally, max_step and stop_time do not have prefix.
@@ -394,7 +393,7 @@ AmrCoreAdv::ReadParameters ()
 
 // set covered coarse cells to be the average of overlying fine cells
 void
-AmrCoreAdv::AverageDown ()
+AmrGVOF::AverageDown ()
 {
     for (int lev = finest_level-1; lev >= 0; --lev)
     {
@@ -406,7 +405,7 @@ AmrCoreAdv::AverageDown ()
 
 // more flexible version of AverageDown() that lets you average down across multiple levels
 void
-AmrCoreAdv::AverageDownTo (int crse_lev)
+AmrGVOF::AverageDownTo (int crse_lev)
 {
     amrex::average_down(phi_new[crse_lev+1], phi_new[crse_lev],
                         geom[crse_lev+1], geom[crse_lev],
@@ -416,7 +415,7 @@ AmrCoreAdv::AverageDownTo (int crse_lev)
 // compute a new multifab by coping in phi from valid region and filling ghost cells
 // works for single level and 2-level cases (fill fine grid ghost by interpolating from coarse)
 void
-AmrCoreAdv::FillPatch (int lev, Real time, MultiFab& mf, int icomp, int ncomp)
+AmrGVOF::FillPatch (int lev, Real time, MultiFab& mf, int icomp, int ncomp)
 {
     if (lev == 0)
     {
@@ -476,7 +475,7 @@ AmrCoreAdv::FillPatch (int lev, Real time, MultiFab& mf, int icomp, int ncomp)
 // fill an entire multifab by interpolating from the coarser level
 // this comes into play when a new level of refinement appears
 void
-AmrCoreAdv::FillCoarsePatch (int lev, Real time, MultiFab& mf, int icomp, int ncomp)
+AmrGVOF::FillCoarsePatch (int lev, Real time, MultiFab& mf, int icomp, int ncomp)
 {
     BL_ASSERT(lev > 0);
 
@@ -513,7 +512,7 @@ AmrCoreAdv::FillCoarsePatch (int lev, Real time, MultiFab& mf, int icomp, int nc
 
 // utility to copy in data from phi_old and/or phi_new into another multifab
 void
-AmrCoreAdv::GetData (int lev, Real time, Vector<MultiFab*>& data, Vector<Real>& datatime)
+AmrGVOF::GetData (int lev, Real time, Vector<MultiFab*>& data, Vector<Real>& datatime)
 {
     data.clear();
     datatime.clear();
@@ -543,7 +542,7 @@ AmrCoreAdv::GetData (int lev, Real time, Vector<MultiFab*>& data, Vector<Real>& 
 // Advance a level by dt
 // (includes a recursive call for finer levels)
 void
-AmrCoreAdv::timeStepWithSubcycling (int lev, Real time, int iteration)
+AmrGVOF::timeStepWithSubcycling (int lev, Real time, int iteration)
 {
     if (regrid_int > 0)  // We may need to regrid
     {
@@ -622,7 +621,7 @@ AmrCoreAdv::timeStepWithSubcycling (int lev, Real time, int iteration)
 
 // Advance all the levels with the same dt
 void
-AmrCoreAdv::timeStepNoSubcycling (Real time, int iteration)
+AmrGVOF::timeStepNoSubcycling (Real time, int iteration)
 {
     if (max_level > 0 && regrid_int > 0)  // We may need to regrid
     {
@@ -666,7 +665,7 @@ AmrCoreAdv::timeStepNoSubcycling (Real time, int iteration)
 
 // a wrapper for EstTimeStep
 void
-AmrCoreAdv::ComputeDt ()
+AmrGVOF::ComputeDt ()
 {
     Vector<Real> dt_tmp(finest_level+1);
 
@@ -703,9 +702,9 @@ AmrCoreAdv::ComputeDt ()
 
 // compute dt from CFL considerations
 Real
-AmrCoreAdv::EstTimeStep (int lev, Real time, bool local)
+AmrGVOF::EstTimeStep (int lev, Real time, bool local)
 {
-    BL_PROFILE("AmrCoreAdv::EstTimeStep()");
+    BL_PROFILE("AmrGVOF::EstTimeStep()");
 
     Real dt_est = std::numeric_limits<Real>::max();
 
@@ -739,14 +738,14 @@ AmrCoreAdv::EstTimeStep (int lev, Real time, bool local)
 
 // get plotfile name
 std::string
-AmrCoreAdv::PlotFileName (int lev) const
+AmrGVOF::PlotFileName (int lev) const
 {
     return amrex::Concatenate(plot_file, lev, 5);
 }
 
 // put together an array of multifabs for writing
 Vector<const MultiFab*>
-AmrCoreAdv::PlotFileMF () const
+AmrGVOF::PlotFileMF () const
 {
     Vector<const MultiFab*> r;
     for (int i = 0; i <= finest_level; ++i) {
@@ -757,14 +756,14 @@ AmrCoreAdv::PlotFileMF () const
 
 // set plotfile variable names
 Vector<std::string>
-AmrCoreAdv::PlotFileVarNames () const
+AmrGVOF::PlotFileVarNames () const
 {
     return {"phi"};
 }
 
 // write plotfile to disk
 void
-AmrCoreAdv::WritePlotFile () const
+AmrGVOF::WritePlotFile () const
 {
     const std::string& plotfilename = PlotFileName(istep[0]);
     const auto& mf = PlotFileMF();
@@ -777,7 +776,7 @@ AmrCoreAdv::WritePlotFile () const
 }
 
 void
-AmrCoreAdv::WriteCheckpointFile () const
+AmrGVOF::WriteCheckpointFile () const
 {
 
     // chk00010            write a checkpoint file with this root directory
@@ -819,7 +818,7 @@ AmrCoreAdv::WriteCheckpointFile () const
        HeaderFile.precision(17);
 
        // write out title line
-       HeaderFile << "Checkpoint file for AmrCoreAdv\n";
+       HeaderFile << "Checkpoint file for AmrGVOF\n";
 
        // write out finest_level
        HeaderFile << finest_level << "\n";
@@ -859,7 +858,7 @@ AmrCoreAdv::WriteCheckpointFile () const
 
 
 void
-AmrCoreAdv::ReadCheckpointFile ()
+AmrGVOF::ReadCheckpointFile ()
 {
 
     amrex::Print() << "Restart from checkpoint " << restart_chkfile << "\n";
@@ -954,7 +953,7 @@ AmrCoreAdv::ReadCheckpointFile ()
 
 // utility to skip to next line in Header
 void
-AmrCoreAdv::GotoNextLine (std::istream& is)
+AmrGVOF::GotoNextLine (std::istream& is)
 {
     constexpr std::streamsize bl_ignore_max { 100000 };
     is.ignore(bl_ignore_max, '\n');

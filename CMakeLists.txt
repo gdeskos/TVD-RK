@@ -40,7 +40,7 @@ set(CMAKE_CXX_COMPILER ${AMREX_CXX_COMPILER})
 set(amr_gvof_exe_name "amr_gvof")
 add_executable(${amr_gvof_exe_name}
                src/main.cpp
-               src/AmrCoreAdv.cpp
+               src/AmrGVOF.cpp
                src/AdvancePhiAllLevels.cpp
                src/AdvancePhiAtLevel.cpp
                src/DefineVelocity.cpp)
