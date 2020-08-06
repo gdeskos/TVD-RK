@@ -15,7 +15,7 @@ cd AMR-GVOF
 mkdir build
 cd build
 cmake ..
-make 
+make -j 4
 ```
 
 ## Usage
