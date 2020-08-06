@@ -10,7 +10,7 @@ The following dependencies must be available on your system:
 
 
 ```
-git clone https://github.com/gdeskos/amr-offshore-utils.git
+git clone https://github.com/gdeskos/AMR-GVOF.git
 cd AMR-GVOF
 mkdir build
 cd build
