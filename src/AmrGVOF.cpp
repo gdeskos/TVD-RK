@@ -209,6 +209,9 @@ AmrGVOF::MakeNewLevelFromCoarse (int lev, Real time, const BoxArray& ba,
     const int ncomp = phi_new[lev-1].nComp();
     const int nghost = phi_new[lev-1].nGrow();
     
+    //Define a new level for the levelset
+    levelset[lev].define(ba,dm,ncomp,nghost);
+
     phi_new[lev].define(ba, dm, ncomp, nghost);
     phi_old[lev].define(ba, dm, ncomp, nghost);
 
@@ -265,6 +268,7 @@ AmrGVOF::RemakeLevel (int lev, Real time, const BoxArray& ba,
 void
 AmrGVOF::ClearLevel (int lev)
 {
+    levelset[lev].clear();
     phi_new[lev].clear();
     phi_old[lev].clear();
     flux_reg[lev].reset(nullptr);
@@ -278,6 +282,8 @@ void AmrGVOF::MakeNewLevelFromScratch (int lev, Real time, const BoxArray& ba,
 {
     const int ncomp = 1;
     const int nghost = 0;
+    
+    levelset[lev].define(ba,dm,ncomp,nghost+1);
 
     phi_new[lev].define(ba, dm, ncomp, nghost);
     phi_old[lev].define(ba, dm, ncomp, nghost);
@@ -296,18 +302,29 @@ void AmrGVOF::MakeNewLevelFromScratch (int lev, Real time, const BoxArray& ba,
     }
 
     Real cur_time = t_new[lev];
-    MultiFab& state = phi_new[lev];
 
-    for (MFIter mfi(state); mfi.isValid(); ++mfi)
+    MultiFab& ls = levelset[lev];
+    MultiFab& vof = phi_new[lev];
+
+    for (MFIter mfi(vof); mfi.isValid(); ++mfi)
     {
-        Array4<Real> fab = state[mfi].array();
+        Array4<Real> ls_fab = ls[mfi].array();
+        Array4<Real> vof_fab = vof[mfi].array();
         GeometryData geomData = geom[lev].data();
         const Box& box = mfi.validbox();
-
+        
+        // Here we define the levelset
         amrex::launch(box,
         [=] AMREX_GPU_DEVICE (Box const& tbx)
         {
-            initdata(tbx, fab, geomData,problem_type);
+            initdata(tbx, ls_fab, geomData,problem_type);
+        });
+
+        // Here we compute the VOF
+        amrex::launch(box,
+        [=] AMREX_GPU_DEVICE (Box const& tbx)
+        {
+            levelset2vof(tbx,ls_fab,vof_fab,geomData);
         });
     }
 }

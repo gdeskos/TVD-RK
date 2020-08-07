@@ -29,7 +29,7 @@ initdata(Box const& bx, Array4<Real> const& phi, GeometryData const& geomdata, i
             for (int i = lo.x; i <= hi.x; ++i) {
                 Real x = prob_lo[0] + (0.5+i) * dx[0]; 
                // Real r2 = (pow(x-0.5, 2) + pow((y-0.75),2)) / 0.01;
-                phi(i,j,k) = 0.15 - sqrt(pow(x-0.35,2)+pow(y-0.35,2)+pow(z-0.35,2));   
+                phi(i,j,k) = 0.15 - sqrt(pow(x-0.3,2)+pow(y-0.3,2)+pow(z-0.3,2));   
             }
         }   
     }

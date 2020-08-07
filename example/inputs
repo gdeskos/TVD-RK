@@ -61,7 +61,7 @@ gvof.do_reflux = 1
 #            if phi > 1.1  at level 1, then refine 
 #            if phi > 1.5  at level 2, then refine 
 # *****************************************************************
-gvof.phierr = 0.  0.1  0.5
+#gvof.phierr = 0.75 0.5 0.25
 
 # *****************************************************************
 # Plotfile name and frequency
