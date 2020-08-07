@@ -49,44 +49,26 @@ AmrGVOF::DefineVelocityAtLevel (int lev, Real time)
                                                                       facevel[lev][1].array(mfi),
                                                                       facevel[lev][2].array(mfi)) };
 
-            const Box& psibox = Box(IntVect(AMREX_D_DECL(std::min(ngbxx.smallEnd(0)-1, ngbxy.smallEnd(0)-1),
-                                                         std::min(ngbxx.smallEnd(1)-1, ngbxy.smallEnd(0)-1),
-                                                         0)),
-                                    IntVect(AMREX_D_DECL(std::max(ngbxx.bigEnd(0),   ngbxy.bigEnd(0)+1),
-                                                         std::max(ngbxx.bigEnd(1)+1, ngbxy.bigEnd(1)),
-                                                         0)));
-
-            //FArrayBox psifab(psibox, 1);
-            //Elixir psieli = psifab.elixir();
-            //Array4<Real> psi = psifab.array();
-            //GeometryData geomdata = geom[lev].data();
             auto prob_lo = geom[lev].ProbLoArray();
             auto dx = geom[lev].CellSizeArray();
 
-            /*
-            amrex::launch(psibox,
-            [=] AMREX_GPU_DEVICE (const Box& tbx)
-            {
-                get_face_velocity_psi(tbx, time, psi, geomdata); 
-            });
-            */
             AMREX_D_TERM(
                          amrex::ParallelFor(ngbxx,
                          [=] AMREX_GPU_DEVICE (int i, int j, int k)
                          {
-                             get_face_velocity_x(i, j, k, vel[0], prob_lo, dx, time); 
+                             get_face_velocity_x(i, j, k, vel[0], prob_lo, dx, time, problem_type); 
                          });,
 
                          amrex::ParallelFor(ngbxy,
                          [=] AMREX_GPU_DEVICE (int i, int j, int k)
                          {
-                             get_face_velocity_y(i, j, k, vel[1], prob_lo, dx, time);
+                             get_face_velocity_y(i, j, k, vel[1], prob_lo, dx, time, problem_type);
                          });,
 
                          amrex::ParallelFor(ngbxz,
                          [=] AMREX_GPU_DEVICE (int i, int j, int k)
                          {
-                             get_face_velocity_z(i, j, k, vel[2], prob_lo, dx, time);
+                             get_face_velocity_z(i, j, k, vel[2], prob_lo, dx, time, problem_type);
                          });
                         );
         }

@@ -48,6 +48,7 @@ amr.regrid_int      = 2       # how often to regrid
 # *****************************************************************
 # Time step control
 # *****************************************************************
+gvof.problem_type   = 1
 gvof.cfl            = 0.7     # CFL constraint for explicit advection
 gvof.do_subcycle    = 1       # Do we subcycle in time?
 
