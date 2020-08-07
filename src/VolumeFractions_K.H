@@ -249,8 +249,8 @@ const auto hi = ubound(bx);
 #ifdef _OPENMP
 #pragma omp parallel for collapse(2) if (GPU::notInLaunchRegion())
 #endif
-for (int k = lo.z+1; k <= hi.z-1; ++k) {
-    for (int j = lo.y+1; j <= hi.y-1; ++j) {
+for (int k = lo.z; k <= hi.z; ++k) {
+    for (int j = lo.y; j <= hi.y; ++j) {
         AMREX_PRAGMA_SIMD
         for (int i = lo.x+1; i <= hi.x-1; ++i) {
             // Step (1) -- compute normals

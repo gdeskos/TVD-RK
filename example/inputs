@@ -3,7 +3,7 @@
 #     whichever comes first
 # *****************************************************************
 max_step  = 1000
-stop_time = 2.0 
+stop_time = 3.0 
 
 # *****************************************************************
 # Are we restarting from an existing checkpoint file?

@@ -35,33 +35,42 @@ AMREX_GPU_DEVICE
 AMREX_FORCE_INLINE
 void get_face_velocity_x(int i, int j, int k,
                          Array4<Real> const& vx,
-                         Array4<Real> const& psi,
                          GpuArray<Real, AMREX_SPACEDIM> prob_lo,
-                         GpuArray<Real, AMREX_SPACEDIM> dx)
+                         GpuArray<Real, AMREX_SPACEDIM> dx,
+                         const Real time)
 {
-    vx(i,j,k) = -( (psi(i,j+1,0)+psi(i-1,j+1,0)) - (psi(i,j-1,0)+psi(i-1,j-1,0)) ) * (0.25/dx[1]); 
+    Real x = dx[0]*i + prob_lo[0]; // At the face
+    Real y = dx[1]*(0.5+j) + prob_lo[1];
+    Real z = dx[2]*(0.5+k) + prob_lo[2];
+    vx(i,j,k) = 2.0*pow(sin(M_PI*x),2)*sin(2.0*M_PI*y)*sin(2.0*M_PI*z)*cos(M_PI*time/3.0); 
 }
 
 AMREX_GPU_DEVICE
 AMREX_FORCE_INLINE
 void get_face_velocity_y(int i, int j, int k,
                          Array4<Real> const& vy,
-                         Array4<Real> const& psi,
                          GpuArray<Real, AMREX_SPACEDIM> prob_lo,
-                         GpuArray<Real, AMREX_SPACEDIM> dx)
+                         GpuArray<Real, AMREX_SPACEDIM> dx,
+                         const Real time)
 {
-    vy(i,j,k) =  ( (psi(i+1,j,0)+psi(i+1,j-1,0)) - (psi(i-1,j,0)+psi(i-1,j-1,0)) ) * (0.25/dx[0]); 
+    Real x = dx[0]*(0.5+i) + prob_lo[0]; // At the face
+    Real y = dx[1]*j + prob_lo[1];
+    Real z = dx[2]*(0.5+k) + prob_lo[2];
+    vy(i,j,k) =  -pow(sin(M_PI*y),2)*sin(2.0*M_PI*z)*sin(2.0*M_PI*x)*cos(M_PI*time/3.0); 
 }
 
 AMREX_GPU_DEVICE
 AMREX_FORCE_INLINE
 void get_face_velocity_z(int i, int j, int k,
                          Array4<Real> const& vz,
-                         Array4<Real> const& psi,
                          GpuArray<Real, AMREX_SPACEDIM> prob_lo,
-                         GpuArray<Real, AMREX_SPACEDIM> dx)
+                         GpuArray<Real, AMREX_SPACEDIM> dx,
+                         const Real time)
 {
-    vz(i,j,k) =  0.0; 
+    Real x = dx[0]*(0.5+i) + prob_lo[0]; // At the face
+    Real y = dx[1]*(0.5+j) + prob_lo[1];
+    Real z = dx[2]*0.5 + prob_lo[2];
+    vz(i,j,k) =  -pow(sin(M_PI*z),2)*sin(2.0*M_PI*x)*sin(2.0*M_PI*y)*cos(M_PI*time/3.0); 
 }
 
 #endif

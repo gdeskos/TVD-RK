@@ -210,7 +210,7 @@ AmrGVOF::MakeNewLevelFromCoarse (int lev, Real time, const BoxArray& ba,
     const int nghost = phi_new[lev-1].nGrow();
     
     //Define a new level for the levelset
-    levelset[lev].define(ba,dm,ncomp,nghost);
+    levelset[lev].define(ba,dm,ncomp,nghost+1);
 
     phi_new[lev].define(ba, dm, ncomp, nghost);
     phi_old[lev].define(ba, dm, ncomp, nghost);

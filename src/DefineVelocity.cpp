@@ -56,36 +56,37 @@ AmrGVOF::DefineVelocityAtLevel (int lev, Real time)
                                                          std::max(ngbxx.bigEnd(1)+1, ngbxy.bigEnd(1)),
                                                          0)));
 
-            FArrayBox psifab(psibox, 1);
-            Elixir psieli = psifab.elixir();
-            Array4<Real> psi = psifab.array();
-            GeometryData geomdata = geom[lev].data();
+            //FArrayBox psifab(psibox, 1);
+            //Elixir psieli = psifab.elixir();
+            //Array4<Real> psi = psifab.array();
+            //GeometryData geomdata = geom[lev].data();
             auto prob_lo = geom[lev].ProbLoArray();
             auto dx = geom[lev].CellSizeArray();
 
+            /*
             amrex::launch(psibox,
             [=] AMREX_GPU_DEVICE (const Box& tbx)
             {
                 get_face_velocity_psi(tbx, time, psi, geomdata); 
             });
-
+            */
             AMREX_D_TERM(
                          amrex::ParallelFor(ngbxx,
                          [=] AMREX_GPU_DEVICE (int i, int j, int k)
                          {
-                             get_face_velocity_x(i, j, k, vel[0], psi, prob_lo, dx); 
+                             get_face_velocity_x(i, j, k, vel[0], prob_lo, dx, time); 
                          });,
 
                          amrex::ParallelFor(ngbxy,
                          [=] AMREX_GPU_DEVICE (int i, int j, int k)
                          {
-                             get_face_velocity_y(i, j, k, vel[1], psi, prob_lo, dx);
+                             get_face_velocity_y(i, j, k, vel[1], prob_lo, dx, time);
                          });,
 
                          amrex::ParallelFor(ngbxz,
                          [=] AMREX_GPU_DEVICE (int i, int j, int k)
                          {
-                             get_face_velocity_z(i, j, k, vel[2], psi, prob_lo, dx);
+                             get_face_velocity_z(i, j, k, vel[2], prob_lo, dx, time);
                          });
                         );
         }
