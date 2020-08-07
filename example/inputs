@@ -14,7 +14,7 @@ stop_time = 2.0
 # Problem size and geometry
 # *****************************************************************
 geometry.prob_lo     =  0.0  0.0  0.0 
-geometry.prob_hi     =  1.0  1.0  0.125
+geometry.prob_hi     =  1.0  1.0  1.0
 geometry.is_periodic =  1    1    1
 
 # *****************************************************************
@@ -25,7 +25,7 @@ amr.v              = 1       # verbosity in Amr
 # *****************************************************************
 # Resolution and refinement
 # *****************************************************************
-amr.n_cell          = 64 64 8
+amr.n_cell          = 64 64 64
 amr.max_level       = 3       # maximum level number allowed -- 
                               # number of levels = max_level + 1
 
@@ -48,21 +48,20 @@ amr.regrid_int      = 2       # how often to regrid
 # *****************************************************************
 # Time step control
 # *****************************************************************
-adv.cfl            = 0.7     # CFL constraint for explicit advection
-
-adv.do_subcycle    = 1       # Do we subcycle in time?
+gvof.cfl            = 0.7     # CFL constraint for explicit advection
+gvof.do_subcycle    = 1       # Do we subcycle in time?
 
 # *****************************************************************
 # Should we reflux at coarse-fine boundaries?
 # *****************************************************************
-adv.do_reflux = 1
+gvof.do_reflux = 1
 
 # *****************************************************************
 # Tagging -  if phi > 1.01 at level 0, then refine 
 #            if phi > 1.1  at level 1, then refine 
 #            if phi > 1.5  at level 2, then refine 
 # *****************************************************************
-adv.phierr = 1.01  1.1  1.5
+gvof.phierr = 0.  0.1  0.5
 
 # *****************************************************************
 # Plotfile name and frequency

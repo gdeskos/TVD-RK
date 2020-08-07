@@ -239,4 +239,12 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE amrex::Real FL3D(
     return FL3D;
 }
 
+AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE amrex::Real levelset2vof(
+    int i,
+    int j,
+    int k) noexcept
+{
+
+}
+
 #endif // VolumeFraction_K.H

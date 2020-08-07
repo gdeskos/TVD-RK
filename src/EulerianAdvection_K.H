@@ -1,5 +1,5 @@
-#ifndef _Adv_K_H_
-#define _Adv_K_H_
+#ifndef EulerianAdvection_K_H_
+#define EulerianAdvection_K_H_
 
 #include <AMReX_Box.H>
 #include <AMReX_FArrayBox.H>

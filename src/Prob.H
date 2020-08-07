@@ -10,7 +10,7 @@ using namespace amrex;
 AMREX_GPU_DEVICE
 AMREX_FORCE_INLINE
 void
-initdata(Box const& bx, Array4<Real> const& phi, GeometryData const& geomdata)
+initdata(Box const& bx, Array4<Real> const& phi, GeometryData const& geomdata, int problem_type)
 {
     const auto lo = lbound(bx);
     const auto hi = ubound(bx);    
@@ -28,10 +28,10 @@ initdata(Box const& bx, Array4<Real> const& phi, GeometryData const& geomdata)
             AMREX_PRAGMA_SIMD
             for (int i = lo.x; i <= hi.x; ++i) {
                 Real x = prob_lo[0] + (0.5+i) * dx[0]; 
-                Real r2 = (pow(x-0.5, 2) + pow((y-0.75),2)) / 0.01;
-                phi(i,j,k) = 1.0 + std::exp(-r2);
+               // Real r2 = (pow(x-0.5, 2) + pow((y-0.75),2)) / 0.01;
+                phi(i,j,k) = 0.15 - sqrt(pow(x-0.35,2)+pow(y-0.35,2)+pow(z-0.35,2));   
             }
-        }
+        }   
     }
 }
 

@@ -45,6 +45,9 @@ AmrGVOF::AmrGVOF ()
     t_old.resize(nlevs_max, -1.e100);
     dt.resize(nlevs_max, 1.e100);
 
+    // Define a levelset here
+    levelset.resize(nlevs_max);
+
     phi_new.resize(nlevs_max);
     phi_old.resize(nlevs_max);
 
@@ -304,7 +307,7 @@ void AmrGVOF::MakeNewLevelFromScratch (int lev, Real time, const BoxArray& ba,
         amrex::launch(box,
         [=] AMREX_GPU_DEVICE (Box const& tbx)
         {
-            initdata(tbx, fab, geomData);
+            initdata(tbx, fab, geomData,problem_type);
         });
     }
 }
@@ -326,7 +329,7 @@ AmrGVOF::ErrorEst (int lev, TagBoxArray& tags, Real time, int ngrow)
         // for that particular level
         // in subroutine state_error, you could use more elaborate tagging, such
         // as more advanced logical expressions, or gradients, etc.
-	ParmParse pp("adv");
+	ParmParse pp("gvof");
 	int n = pp.countval("phierr");
 	if (n > 0) {
 	    pp.getarr("phierr", phierr, 0, n);
@@ -383,8 +386,9 @@ AmrGVOF::ReadParameters ()
     }
 
     {
-	ParmParse pp("adv");
-	
+	ParmParse pp("gvof");
+	pp.query("problem_type",problem_type);
+
 	pp.query("cfl", cfl);
         pp.query("do_reflux", do_reflux);
         pp.query("do_subcycle", do_subcycle);

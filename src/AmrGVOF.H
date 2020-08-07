@@ -151,6 +151,9 @@ private:
     amrex::Vector<amrex::MultiFab> phi_new;
     amrex::Vector<amrex::MultiFab> phi_old;
 
+    // array of multifabs to store the levelset at each level of refinement
+    amrex::Vector<amrex::MultiFab> levelset; 
+
     // this is essentially a 2*DIM integer array storing the physical boundary
     // condition types at the lo/hi walls in each direction
     amrex::Vector<BCRec> bcs;  // 1-component
@@ -178,6 +181,9 @@ private:
 
     // advective cfl number - dt = cfl*dx/umax
     amrex::Real cfl = 0.7;
+
+    // Problem type
+    int problem_type = 0; 
 
     // how often each level regrids the higher levels of refinement
     // (after a level advances that many time steps)
