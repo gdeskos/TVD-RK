@@ -49,8 +49,9 @@ amr.regrid_int      = 2       # how often to regrid
 # Time step control
 # *****************************************************************
 gvof.problem_type   = 1
+gvof.advection_type = Eulerian
 gvof.cfl            = 0.7     # CFL constraint for explicit advection
-gvof.do_subcycle    = 1       # Do we subcycle in time?
+gvof.do_subcycle    = 0       # Do we subcycle in time?
 
 # *****************************************************************
 # Should we reflux at coarse-fine boundaries?
@@ -62,7 +63,7 @@ gvof.do_reflux = 1
 #            if phi > 1.1  at level 1, then refine 
 #            if phi > 1.5  at level 2, then refine 
 # *****************************************************************
-#gvof.phierr = 0.75 0.5 0.25
+#gvof.phierr = 1.01 1.1 1.5
 
 # *****************************************************************
 # Plotfile name and frequency

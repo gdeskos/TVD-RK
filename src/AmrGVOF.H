@@ -65,13 +65,22 @@ public:
     // overrides the pure virtual function in AmrCore
     virtual void ErrorEst (int lev, amrex::TagBoxArray& tags, amrex::Real time, int ngrow) override;
 
-    // Advance phi at a single level for a single time step, update flux registers
-    void AdvancePhiAtLevel (int lev, amrex::Real time, amrex::Real dt_lev, int iteration, int ncycle);
+    //////////////////////// ADVECTION SCHEMES //////////////////////
+    
+    //// EULERIAN ADVECTION WITH AN UNSPLIT OPERATOR /////////////////
+    // Advance Volume Fractions at a single level for a single time step, update flux registers
+    void EulerianUnsplitAdvectionAtLevel (int lev, amrex::Real time, amrex::Real dt_lev, int iteration, int ncycle);
 
-    // Advance phi at all levels for a single time step
-    void AdvancePhiAllLevels (amrex::Real time, amrex::Real dt_lev, int iteration);
+    // Advance Volume Fractions at all levels for a single time step
+    void EulerianUnsplitAdvectionAllLevels (amrex::Real time, amrex::Real dt_lev, int iteration);
 
-    // Define the advection velocity as the curl of a scalar field
+    //// LAGRANGIAN ADVECTION WITH A SPLIT OPERATOR
+    // Advance Volume Fractions at all levels for a single time step
+    void LagrangianSplitAdvectionAllLevels (amrex::Real time, amrex::Real dt_lev, int iteration);
+
+    //////////////////////////////////////////////////////////////////
+   
+    // Define the Advection velocity
     void DefineVelocityAtLevel (int lev, amrex::Real time);
 
     void DefineVelocityAllLevels (amrex::Real time);
@@ -181,6 +190,9 @@ private:
 
     // advective cfl number - dt = cfl*dx/umax
     amrex::Real cfl = 0.7;
+    
+    // Advection type
+    std::string adv_type {"Eulerian"};
 
     // Problem type
     int problem_type = 0; 

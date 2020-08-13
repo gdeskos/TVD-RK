@@ -41,8 +41,9 @@ set(amr_gvof_exe_name "amr_gvof")
 add_executable(${amr_gvof_exe_name}
                src/main.cpp
                src/AmrGVOF.cpp
-               src/AdvancePhiAllLevels.cpp
-               src/AdvancePhiAtLevel.cpp
+               src/EulerianUnsplitAdvectionAllLevels.cpp
+               src/EulerianUnsplitAdvectionAtLevel.cpp
+               src/LagrangianSplitAdvectionAllLevels.cpp
                src/DefineVelocity.cpp)
 target_link_libraries(${amr_gvof_exe_name} amrex)
 

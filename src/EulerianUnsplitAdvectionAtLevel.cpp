@@ -5,7 +5,7 @@ using namespace amrex;
 
 // Advance a single level for a single time step, updates flux registers
 void
-AmrGVOF::AdvancePhiAtLevel (int lev, Real time, Real dt_lev, int iteration, int ncycle)
+AmrGVOF::EulerianUnsplitAdvectionAtLevel (int lev, Real time, Real dt_lev, int iteration, int ncycle)
 {
     constexpr int num_grow = 3;
 

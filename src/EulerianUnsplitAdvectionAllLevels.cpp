@@ -7,7 +7,7 @@ using namespace amrex;
 
 // advance all levels for a single time step
 void
-AmrGVOF::AdvancePhiAllLevels (Real time, Real dt_lev, int iteration)
+AmrGVOF::EulerianUnsplitAdvectionAllLevels (Real time, Real dt_lev, int iteration)
 {
     constexpr int num_grow = 3;
 
@@ -327,7 +327,11 @@ AmrGVOF::AdvancePhiAllLevels (Real time, Real dt_lev, int iteration)
                                  statein, stateout,
                                  AMREX_D_DECL(flux[0], flux[1], flux[2]),
                                  dtdx);
+                    // Do clipping
+                    stateout(i, j, k) = std::max(0.0, std::min(1.0, stateout(i, j, k)));
                 });
+
+
             } // end mfi
         } // end omp
     } // end lev

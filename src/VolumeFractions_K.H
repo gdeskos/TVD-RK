@@ -9,14 +9,14 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE void compute_normals(
     int j,
     int k,
     amrex::Array4<amrex::Real const> const& c,
-    amrex::Array4<amrex::Real> const& mxyz) noexcept
+    amrex::Real mx, amrex::Real my, amrex::Real mz) noexcept
 {
-    amrex::Real mm1, mm2, mx, my, mz;
+    amrex::Real mm1, mm2;
 
     mm1 = c(i - 1, j - 1, k - 1) + c(i - 1, j - 1, k + 1) +
           c(i - 1, j + 1, k - 1) + c(i - 1, j + 1, k + 1) +
           2.0 * (c(i - 1, j - 1, k) + c(i - 1, j + 1, k) + c(i - 1, j, k - 1) +
-                 c(i - 1, j, k + 1)) +
+                 c(i - 1, j, k + 1)) + 
           4.0 * c(i - 1, j, k);
     mm2 = c(i + 1, j - 1, k - 1) + c(i + 1, j - 1, k + 1) +
           c(i + 1, j + 1, k - 1) + c(i + 1, j + 1, k + 1) +
@@ -49,12 +49,6 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE void compute_normals(
           4.0 * c(i, j, k + 1);
     mz = mm1 - mm2;
 
-    amrex::Real mmag = std::sqrt(mx*mx+my*my+mz*mz);
-
-    // Assign to array mxyz
-    mxyz(i, j, k, 0) = mx;
-    mxyz(i, j, k, 1) = my;
-    mxyz(i, j, k, 2) = mz;
 }
 /* Computes alpha: m1*x1 + m2* x2 + m3*x3 = alpha
  * given that m1+m2+m3=1 (m1,m2,m3>0) and the volumetric fraction cc
@@ -63,15 +57,15 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE amrex::Real AL3D(
     int i,
     int j,
     int k,
-    amrex::Array4<amrex::Real const> const& mxyz,
+    amrex::Real mx, amrex::Real my, amrex::Real  mz,
     amrex::Array4<amrex::Real const> const& cc) noexcept
 {
     using namespace amrex;
 
     amrex::Real const_tiny = std::numeric_limits<amrex::Real>::epsilon();
-    amrex::Real b1 = mxyz(i, j, k, 0);
-    amrex::Real b2 = mxyz(i, j, k, 1);
-    amrex::Real b3 = mxyz(i, j, k, 2);
+    amrex::Real b1 = mx;
+    amrex::Real b2 = my;
+    amrex::Real b3 = mz;
     // (1) order coefficients: m1<m2<m3;
     // (2) get ranges: V1<V2<v3;
     // (3) limit ch (0.d0 < ch < 0.5d0);

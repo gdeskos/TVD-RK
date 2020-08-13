@@ -122,10 +122,15 @@ AmrGVOF::Evolve ()
 
         int lev = 0;
         int iteration = 1;
+
         if (do_subcycle)
             timeStepWithSubcycling(lev, cur_time, iteration);
         else
             timeStepNoSubcycling(cur_time, iteration);
+
+    
+        // After advancing we re doing clipping
+
 
         cur_time += dt[0];
 
@@ -404,6 +409,7 @@ AmrGVOF::ReadParameters ()
 
     {
 	ParmParse pp("gvof");
+	pp.query("advection_type",adv_type);
 	pp.query("problem_type",problem_type);
 
 	pp.query("cfl", cfl);
@@ -611,7 +617,8 @@ AmrGVOF::timeStepWithSubcycling (int lev, Real time, int iteration)
     Real t_nph = t_old[lev] + 0.5*dt[lev]; 
 
     DefineVelocityAtLevel(lev, t_nph);
-    AdvancePhiAtLevel(lev, time, dt[lev], iteration, nsubsteps[lev]);
+    
+    EulerianUnsplitAdvectionAtLevel(lev, time, dt[lev], iteration, nsubsteps[lev]);
 
     ++istep[lev];
 
@@ -665,7 +672,11 @@ AmrGVOF::timeStepNoSubcycling (Real time, int iteration)
     }
 
     DefineVelocityAllLevels(time);
-    AdvancePhiAllLevels (time, dt[0], iteration);
+    if (adv_type=="Eulerian"){ 
+        EulerianUnsplitAdvectionAllLevels (time, dt[0], iteration);
+    } else if (adv_type=="Lagrangian"){
+        LagrangianSplitAdvectionAllLevels(time,dt[0],iteration);
+    }
 
     // Make sure the coarser levels are consistent with the finer levels
     AverageDown ();
