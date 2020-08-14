@@ -18,9 +18,12 @@ AmrGVOF::LagrangianSplitAdvectionAllLevels (Real time, Real dt_lev, int iteratio
         for (int idim = 0; idim < AMREX_SPACEDIM; ++idim)
         {
             BoxArray ba = grids[lev];
-            ba.surroundingNodes(idim);
+            //ba.surroundingNodes(idim);
+            //amrex::Print()<<ba<<std::endl;
             fluxes[lev][idim] = MultiFab(ba, dmap[lev], 1, 0);
         }
+        //amrex::Abort("exit!");
+
     }
 
     for (int lev = 0; lev <= finest_level; lev++)
@@ -58,20 +61,49 @@ AmrGVOF::LagrangianSplitAdvectionAllLevels (Real time, Real dt_lev, int iteratio
                 const Box& bx = mfi.tilebox();
                 const Box& gbx = amrex::grow(bx, 1);
 
-                Array4<Real> statein  = Sborder.array(mfi);
-                Array4<Real> stateout = phi_new[lev].array(mfi);
+                Array4<Real> cc = phi_new[lev].array(mfi);
 
                 GpuArray<Array4<Real>, 3> flux{ AMREX_D_DECL(fluxes[lev][0].array(mfi),
                                                              fluxes[lev][1].array(mfi),
                                                              fluxes[lev][2].array(mfi)) };
 
-                // Define Volume Fraction and Volume Fraction BCs
+                // X-direction 
                 amrex::ParallelFor(bx,
                 [=] AMREX_GPU_DEVICE (int i, int j, int k)
                 {
-                // Sweeping over the x-direction
-                lagrangian_advection(i,j,k,0,dtdx[0],flux[0],vel[0],stateout);
+                lagrangian_advection(i,j,k,0,dtdx[0],flux[0],flux[1],flux[2],vel[0],cc);
                 });
+                amrex::ParallelFor(bx,
+                [=] AMREX_GPU_DEVICE (int i, int j, int k)
+                {
+                apply_fluxes(i,j,k,0,flux[0],flux[1],flux[2],cc);
+                });
+
+                // Y-direction
+                amrex::ParallelFor(bx,
+                [=] AMREX_GPU_DEVICE (int i, int j, int k)
+                {
+                lagrangian_advection(i,j,k,1,dtdx[1],flux[0],flux[1],flux[2],vel[1],cc);
+                });
+                amrex::ParallelFor(bx,
+                [=] AMREX_GPU_DEVICE (int i, int j, int k)
+                {
+                apply_fluxes(i,j,k,1,flux[0],flux[1],flux[2],cc);
+                });
+
+                //Z-direction
+                amrex::ParallelFor(bx,
+                [=] AMREX_GPU_DEVICE (int i, int j, int k)
+                {
+                lagrangian_advection(i,j,k,2,dtdx[2],flux[0],flux[1],flux[2],vel[2],cc);
+                });
+                amrex::ParallelFor(bx,
+                [=] AMREX_GPU_DEVICE (int i, int j, int k)
+                {
+                apply_fluxes(i,j,k,2,flux[0],flux[1],flux[2],cc);
+                });
+
+
             }
         } //end omp
     } // end lev

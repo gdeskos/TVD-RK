@@ -57,11 +57,11 @@ AmrGVOF::AmrGVOF ()
     int bc_lo[] = {BCType::int_dir, BCType::int_dir, BCType::int_dir};
     int bc_hi[] = {BCType::int_dir, BCType::int_dir, BCType::int_dir};
 
-/*
+
     // walls (Neumann)
-    int bc_lo[] = {FOEXTRAP, FOEXTRAP, FOEXTRAP};
-    int bc_hi[] = {FOEXTRAP, FOEXTRAP, FOEXTRAP};
-*/
+    //int bc_lo[] = {FOEXTRAP, FOEXTRAP, FOEXTRAP};
+    //int bc_hi[] = {FOEXTRAP, FOEXTRAP, FOEXTRAP};
+
 
     bcs.resize(1);     // Setup 1-component
     for (int idim = 0; idim < AMREX_SPACEDIM; ++idim)
@@ -675,7 +675,7 @@ AmrGVOF::timeStepNoSubcycling (Real time, int iteration)
     if (adv_type=="Eulerian"){ 
         EulerianUnsplitAdvectionAllLevels (time, dt[0], iteration);
     } else if (adv_type=="Lagrangian"){
-        LagrangianSplitAdvectionAllLevels(time,dt[0],iteration);
+        LagrangianSplitAdvectionAllLevels (time, dt[0], iteration);
     }
 
     // Make sure the coarser levels are consistent with the finer levels
