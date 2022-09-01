@@ -1,8 +1,7 @@
 
-# Geometric Volume-of-Fluid (GVOF) with Adaptive Mesh Refinement (AMR)
+# TVD-RK with Adaptive Mesh Refinement (AMR)
 
-Contains test code to demonstrate standard Geometric volume-of-fluid techniques, such as the Piecewise linear interface calculation (PLIC) technique
-and its combination with AMR
+Contains test code to demonstrate TOTAL VARIATION DIMINISHING RUNGE-KUTTA SCHEMES
 
 The following dependencies must be available on your system:
 
@@ -11,7 +10,7 @@ The following dependencies must be available on your system:
 
 ```
 git clone https://github.com/gdeskos/AMR-GVOF.git
-cd AMR-GVOF
+cd TVD-RK
 mkdir build
 cd build
 cmake ..
@@ -21,5 +20,5 @@ make -j 4
 ## Usage
 
 ```
-mpiexec -np <NPROCS> amr_gvof <input_file>
+mpiexec -np <NPROCS> tvd_rk <input_file>
 ```
