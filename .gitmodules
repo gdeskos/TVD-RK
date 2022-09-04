@@ -1,3 +1,3 @@
-[submodule "submods/amrex_new"]
-	path = submods/amrex_new
+[submodule "submods/amrex"]
+	path = submods/amrex
 	url = https://github.com/AMReX-Codes/amrex.git
